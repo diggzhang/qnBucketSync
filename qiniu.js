@@ -41,7 +41,7 @@ qiniu.rsf.listPrefix(bucketName, '', marker, limit, function(err, ret) {
     if (!err) {
 
         var i = 0;
-        var baseUrl = "http://7xaw4c.com2.z0.glb.qiniucdn.com/";
+        var baseUrl = config.baseUrl;
         var sourceUrl = "";
 
         for (i ; i < ret.items.length; i++) {
