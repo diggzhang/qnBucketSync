@@ -1,0 +1,17 @@
+{
+  "name": "qiniusdk",
+  "version": "1.0.0",
+  "description": "",
+  "main": "qiniu.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "gee-shell": "0.1.0-pre",
+    "qiniu": "^6.1.8",
+    "shelljs": "^0.5.1",
+    "wget-improved": "^1.1.1"
+  }
+}
