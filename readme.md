@@ -11,7 +11,8 @@ Getting Started
     var config = {
         access_key : "dfasdfsdlfjsdlf;jasd",
         secret_key : "fsdfsadfasdfasfasfdsa",
-        bucket_name : "fsfasdfas"
+        bucket_name : "fsfasdfas",
+        baseUrl: "http://dsfsf.com/fdsfs/"
     };
 
     module.exports = config;
