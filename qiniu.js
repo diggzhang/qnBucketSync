@@ -13,6 +13,7 @@
 
 var qiniu = require('qiniu');
 var wget = require('wget-improved');
+var async = require('async');
 var config = require('./config');
 
 
@@ -28,7 +29,8 @@ qiniu.conf.ACCESS_KEY = config.access_key;
 qiniu.conf.SECRET_KEY = config.secret_key;
 var bucketName = config.bucket_name;
 var marker = null;
-var limit = 2;
+var limit = 10;
+var baseUrl = config.baseUrl;
 
 /*
 *   get bucket list then down them all
@@ -38,42 +40,43 @@ var limit = 2;
 *
 */
 qiniu.rsf.listPrefix(bucketName, '', marker, limit, function(err, ret) {
+
     if (!err) {
-
-        var i = 0;
-        var baseUrl = config.baseUrl;
         var sourceUrl = "";
+        var thread = 5;
+        var download = null;
+        var options = {};
 
-        for (i ; i < ret.items.length; i++) {
 
-            //console.log(ret.items[i].key);
-            /*
-            *   wget config
-            *   var output = 'source location at local';
-            * */
-            var download = null;
-            var options = {};
-            var output = './' + ret.items[i].key;
+        var q = async.queue(function (task, callback) {
 
-            // source uri
-            sourceUrl = encodeURI(baseUrl + ret.items[i].key);
+            var output = './' +  task.key;
+            sourceUrl = encodeURI(baseUrl + task.key);
 
-            // wget download
             download = wget.download(sourceUrl, output, options);
 
-            // wget process info
             download.on('error', function (err) {
                 console.log(err);
             });
 
             download.on('end', function (output) {
-                console.log(output);
+                console.log( output + ' ' + task.key);
+                callback();
             });
 
             download.on('progress', function (progress) {
-                console.log(progress);
+                //console.log(progress);
             });
+
+        }, thread);
+
+        q.drain = function () {
+            console.log('all videos have been downloaded');
         };
+
+        q.push(ret.items, function (err) {
+            if (err) throw err;
+        });
 
     } else {
         console.log(err);

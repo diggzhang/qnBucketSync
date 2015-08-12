@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "async": "^1.4.2",
     "gee-shell": "0.1.0-pre",
     "qiniu": "^6.1.8",
     "shelljs": "^0.5.1",
