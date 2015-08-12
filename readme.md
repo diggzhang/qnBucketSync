@@ -44,7 +44,7 @@ Getting Started
 
 ```
 
-#Step 6 Config run.sh for cron
+#Step 5 Config run.sh for cron
 
 ```shell
 
@@ -56,7 +56,7 @@ Getting Started
 
 ```
 
-#Step 5 crontab this task
+#Step 6 crontab this task
 
 ```shell
 

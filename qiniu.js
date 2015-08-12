@@ -9,13 +9,16 @@
  *  ├── qiniu.js
  *  └── config.js
  *
+ *  thread 5 17.937
+ *  thread 1 49.803
+ *
+ *  todo: shell.js -> wget
  * */
 
 var qiniu = require('qiniu');
 var wget = require('wget-improved');
 var async = require('async');
 var config = require('./config');
-
 
 /*
 *   qn configure
