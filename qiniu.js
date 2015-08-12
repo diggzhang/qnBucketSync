@@ -29,7 +29,7 @@ qiniu.conf.ACCESS_KEY = config.access_key;
 qiniu.conf.SECRET_KEY = config.secret_key;
 var bucketName = config.bucket_name;
 var marker = null;
-var limit = 10;
+var limit = 5;
 var baseUrl = config.baseUrl;
 
 /*
@@ -43,7 +43,7 @@ qiniu.rsf.listPrefix(bucketName, '', marker, limit, function(err, ret) {
 
     if (!err) {
         var sourceUrl = "";
-        var thread = 5;
+        var thread = 1;
         var download = null;
         var options = {};
 
