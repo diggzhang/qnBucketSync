@@ -18,67 +18,97 @@
 var qiniu = require('qiniu');
 var wget = require('wget-improved');
 var async = require('async');
+var shell = require('shelljs');
+var fs = require('fs');
+var _ = require('lodash');
 var config = require('./config');
 
+
 /*
-*   qn configure
-*   qiniu.conf.ACCESS_KEY = '<your access key>';
-*   qiniu.conf.SECRET_KEY = '<your secret key>';
-*   bucketName = 'your bucket name';
-*   marker = null;   default config is null, use for server callback
-*   limit = 99999;   limit of source list
-* */
+ *   qn configure
+ *   qiniu.conf.ACCESS_KEY = '<your access key>';
+ *   qiniu.conf.SECRET_KEY = '<your secret key>';
+ *   bucketName = 'your bucket name';
+ *   marker = null;   default config is null, use for server callback
+ *   limit = 99999;   limit of source list
+ * */
 qiniu.conf.ACCESS_KEY = config.access_key;
 qiniu.conf.SECRET_KEY = config.secret_key;
 var bucketName = config.bucket_name;
 var marker = null;
-var limit = 5;
+var limit = 7;
 var baseUrl = config.baseUrl;
 
 /*
-*   get bucket list then down them all
-*
-*   list resourse list from bucket:
-*   qiniu.rsf.listPrefix(bucketname, prefix, marker, limit, function(err, ret) {} )
-*
-*/
+ *   get bucket list then down them all
+ *
+ *   list resourse list from bucket:
+ *   qiniu.rsf.listPrefix(bucketname, prefix, marker, limit, function(err, ret) {} )
+ *
+ */
 qiniu.rsf.listPrefix(bucketName, '', marker, limit, function(err, ret) {
 
     if (!err) {
         var sourceUrl = "";
-        var thread = 1;
+        var thread = 3;
         var download = null;
         var options = {};
+        var downloadPath = './video/';
+
+        var savedIn = [];       //already down
+        var listToRead= [];     //read new list
+        var downloadList = [];  //after compare need to down
 
 
-        var q = async.queue(function (task, callback) {
+        // 通过对比下载目录文件名以及从线上读取的文件列表判断有无新文件更新
+        fs.readdir(downloadPath, function (err, list) {
 
-            var output = './' +  task.key;
-            sourceUrl = encodeURI(baseUrl + task.key);
-
-            download = wget.download(sourceUrl, output, options);
-
-            download.on('error', function (err) {
-                console.log(err);
+            list.forEach(function (file) {
+                savedIn.push(file);
             });
+            console.log("已经下载了： " + savedIn);
 
-            download.on('end', function (output) {
-                console.log( output + ' ' + task.key);
-                callback();
+            ret.items.forEach(function (file) {
+                listToRead.push(file.key);
             });
+            console.log("更新的列表： " + listToRead);
 
-            download.on('progress', function (progress) {
-                //console.log(progress);
+            downloadList = _.xor(savedIn, listToRead);
+            console.log("需要去下载： " + downloadList);
+            console.log("共需要去下载 " + downloadList.length + " 个文件");
+
+            var q = async.queue(function (task, callback) {
+
+                var output = downloadPath +  task;
+                sourceUrl = encodeURI(baseUrl + task);
+
+                //shell.exec('wget -c' + sourceUrl);
+
+                download = wget.download(sourceUrl, output, options);
+
+                download.on('error', function (err) {
+                    console.log(err);
+                });
+
+                download.on('end', function (output) {
+                    console.log( output + ' ' + task);
+                    callback();
+                });
+
+                download.on('progress', function (progress) {
+                    //console.log(progress);
+                });
+
+            }, thread);
+
+            q.drain = function () {
+                console.log('all videos have been downloaded');
+            };
+
+            // 下载条目stack
+            q.push(downloadList, function (err) {
+                if (err) throw err;
             });
-
-        }, thread);
-
-        q.drain = function () {
-            console.log('all videos have been downloaded');
-        };
-
-        q.push(ret.items, function (err) {
-            if (err) throw err;
         });
 
     } else {
