@@ -10,10 +10,12 @@
   "license": "ISC",
   "dependencies": {
     "async": "^1.4.2",
+    "functional-shell": "^0.1.1",
     "gee-shell": "0.1.0-pre",
     "lodash": "^3.10.1",
     "qiniu": "^6.1.8",
     "shelljs": "^0.5.1",
-    "wget-improved": "^1.1.1"
+    "wget-improved": "^1.1.1",
+    "shell-task": "latest"
   }
 }

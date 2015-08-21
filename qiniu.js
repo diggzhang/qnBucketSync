@@ -16,9 +16,8 @@
  * */
 
 var qiniu = require('qiniu');
-var wget = require('wget-improved');
 var async = require('async');
-var shell = require('shelljs');
+var Task = require('shell-task');
 var fs = require('fs');
 var _ = require('lodash');
 var config = require('./config');
@@ -36,7 +35,7 @@ qiniu.conf.ACCESS_KEY = config.access_key;
 qiniu.conf.SECRET_KEY = config.secret_key;
 var bucketName = config.bucket_name;
 var marker = null;
-var limit = 7;
+var limit = 3;
 var baseUrl = config.baseUrl;
 
 /*
@@ -82,22 +81,12 @@ qiniu.rsf.listPrefix(bucketName, '', marker, limit, function(err, ret) {
                 var output = downloadPath +  task;
                 sourceUrl = encodeURI(baseUrl + task);
 
-                //shell.exec('wget -c' + sourceUrl);
+                new Task('wget -c ' + sourceUrl + ' -P ' + output)
+                    .run(function(err, next) {
+                        if(err) throw err;
+                        callback();
+                    });
 
-                download = wget.download(sourceUrl, output, options);
-
-                download.on('error', function (err) {
-                    console.log(err);
-                });
-
-                download.on('end', function (output) {
-                    console.log( output + ' ' + task);
-                    callback();
-                });
-
-                download.on('progress', function (progress) {
-                    //console.log(progress);
-                });
 
             }, thread);
 
