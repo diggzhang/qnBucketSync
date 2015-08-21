@@ -78,15 +78,15 @@ qiniu.rsf.listPrefix(bucketName, '', marker, limit, function(err, ret) {
 
             var q = async.queue(function (task, callback) {
 
-                var output = downloadPath +  task;
-                sourceUrl = encodeURI(baseUrl + task);
+                sourceUrl = (baseUrl + task);
 
-                new Task('wget -c ' + sourceUrl + ' -P ' + output)
+                // .then('curl ' + sourceUrl + ' -o ' + downloadPath + task.toString() )
+                new Task('echo trying to curl')
+                    .then('curl ' + sourceUrl + ' -o ' + downloadPath + task.toString() )
                     .run(function(err, next) {
                         if(err) throw err;
                         callback();
                     });
-
 
             }, thread);
 
