@@ -2,9 +2,9 @@
 
 Getting Started
 ===============
-##Step 1 Prepare Your Bucket *SECRET KEY* and *ACCESS KEY*
+## Step 1 Prepare Your Bucket *SECRET KEY* and *ACCESS KEY*
 
-##Step 2 Configure key in config.js, you need create new one named this.
+## Step 2 Configure key in config.js, you need create new one named this.
 
 ```js
 
@@ -19,7 +19,7 @@ Getting Started
 
 ```
 
-#Step 3 Configure wget in qiniu.js, be aware the output path
+## Step 3 Configure wget in qiniu.js, be aware the output path
 
 ```js
 
@@ -35,7 +35,7 @@ Getting Started
 
 ```
 
-#Step 4 run it
+## Step 4 run it
 
 ```bash
 
@@ -44,7 +44,7 @@ Getting Started
 
 ```
 
-#Step 5 Config run.sh for cron
+## Step 5 Config run.sh for cron
 
 ```shell
 
@@ -56,7 +56,7 @@ Getting Started
 
 ```
 
-#Step 6 crontab this task
+## Step 6 crontab this task
 
 ```shell
 
